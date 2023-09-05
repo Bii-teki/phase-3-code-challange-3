@@ -46,10 +46,10 @@ class Restaurant(Base):
         return f"Restraunt name: {self.name} {self.price} "
     
     
-    def all_reviews(self):        
+    def all_reviews(self, session):        
         review_strings = []
-        for review in self.reviews:
-            customer_full_name = review.customer.full_name()
+        for review in self.get_reviews(session):
+            customer_full_name = review.customer(session).full_name()
             star_rating = review.rating
             review_str = f"Review for {self.name} by {customer_full_name}: {star_rating} stars."
             review_strings.append(review_str)
@@ -71,13 +71,11 @@ class Customer(Base):
         self.last_name = last_name
         
         
-    def reviews(self, session):
-        # return a collection of all the reviews that the `Customer` has left
+    def reviews(self, session):        
         return session.query(Review).filter(Review.customer_id == self.id).all()
  
     
     def get_restaurants(self, session):
-        # return a collection of all the restaurants that the `Customer` has reviewed
         restaurant_ids = session.query(Review.restaurant_id).filter(Review.customer_id == self.id).all()
         return [session.query(Restaurant).get(restaurant_id[0]) for restaurant_id in restaurant_ids]
     
@@ -136,9 +134,9 @@ class Review(Base):
     def restaurant(self, session):
         return session.query(Restaurant).filter_by(id=self.restaurant_id).first()
     
-    def full_review(self):        
-        restaurant_name = self.restaurant.name  
-        customer_full_name = self.customer.full_name() 
+    def full_review(self,session):        
+        restaurant_name = self.restaurant(session).name  
+        customer_full_name = self.customer(session).full_name() 
         star_rating = self.rating 
         review_str = f"Review for {restaurant_name} by {customer_full_name}: {star_rating} stars."
         return review_str

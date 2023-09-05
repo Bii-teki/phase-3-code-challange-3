@@ -131,14 +131,14 @@ customer.delete_reviews(restaurant, session)
 session.commit()
 
 
-# review = Review(
-#     rating=5,  # Replace with the actual rating
-#     comments="Mambo ni matatu",  # Replace with the actual comments
-#     restaurant_id=6,  # Replace with the associated restaurant
-#     customer_id=4  # Replace with the associated customer
-# )
-# formatted_review = review.full_review()
-# print(formatted_review)
+review = Review(
+    rating=5,  
+    comments="Mambo ni matatu",  
+    restaurant_id=6, 
+    customer_id=4  
+)
+formatted_review = review.full_review(session)
+print(formatted_review)
 
 
 fanciest = Restaurant.fanciest(session)
@@ -148,7 +148,7 @@ else:
     print("No restaurants found.")
     
 
-restaurant = session.query(Restaurant).get(5)  
-reviews = restaurant.all_reviews()
+restaurant = session.query(Restaurant).filter_by( id = 5).first()  
+reviews = restaurant.all_reviews(session)
 for review in reviews:
     print(review)    
